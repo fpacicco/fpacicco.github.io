@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Zen Action - Palestra di Arti Marziali</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <style>
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #00ff00;
+            color: #333333;
+            position: fixed; /* Rende la navbar fissa in cima alla finestra del browser */
+            top: 0;
+            width: 100%;
+            z-index: 1000; /* Assicura che la navbar sia sopra gli altri contenuti */
+        }
+
+        .navbar .logo {
+            font-size: 24px;
+        }
+
+        .navbar-links {
+            display: flex;
+        }
+
+        .navbar-links a {
+            margin-left: 15px;
+            text-decoration: none;
+            color: #333333;
+        }
+
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            color: #00ff00;
+            font-size: 30px;
+            background-color: #333333;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: center;
+                transition: all 0.5s ease;
+                /* Aggiunta di una transizione per animare il cambio di display */
+            }
+
+            .navbar-links a {
+                margin: 10px 0;
+            }
+
+
+            .hamburger {
+                display: block;
+            }
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans JP', sans-serif;
+            scroll-behavior: smooth;
+            background-color: #333333;
+            color: #f0f0f0;
+            padding-top: 60px; /* Altezza della navbar più un po' di margine */
+        }
+
+        header,
+        footer {
+            padding: 40px;
+            text-align: center;
+        }
+
+        .section {
+            min-height: 65vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+            text-align: center;
+            margin: 40px auto;
+            /* Aggiunge un margine superiore e inferiore di 40px */
+            padding: 20px 0;
+            /* Padding interno per ulteriore spazio sopra e sotto il contenuto */
+            max-width: 960px;
+            /* Limita la larghezza massima delle sezioni per una migliore leggibilità su schermi grandi */
+            width: 90%;
+            /* Usa il 90% della larghezza dello schermo fino a un massimo di 960px */
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            /* Aggiunta trasparenza al background */
+            color: #f0f0f0;
+            padding: 10px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            /* Assicura che la nav sia sopra gli altri elementi */
+        }
+
+        nav a,
+        .logo {
+            color: #f0f0f0;
+            padding: 10px 20px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .logo {
+            font-size: 24px;
+            opacity: 1;
+            /* Logo pienamente visibile */
+        }
+
+        .scrolling .logo {
+            opacity: 0.5;
+            /* Trasparenza durante lo scroll */
+        }
+
+        nav a:hover,
+        .logo:hover {
+            background-color: #333333;
+            color:#00ff00;
+        }
+
+        h1,
+        h2 {
+            color: #f0f0f0;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .image-placeholder {
+            background-color: #333333;
+            width: 90%;
+            height: 33%;
+            margin: 20px auto;
+            border-radius: 8px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .fadeIn {
+            animation-name: fadeIn;
+            animation-duration: 1s;
+        }
+
+
+        .masters-gallery {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .masters-gallery img {
+            width: 22%;
+            /* Divide lo spazio equamente con un po' di margine tra le immagini */
+            cursor: pointer;
+            /* Mostra un indicatore di clic quando il mouse è sopra l'immagine */
+            transition: transform 0.3s ease;
+            max-width: 80px;
+        }
+
+        .masters-gallery img:hover {
+            transform: scale(1.05);
+            /* Effetto di zoom leggero al passaggio del mouse */
+        }
+
+
+        .popup-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .popup {
+            position: relative;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+            width: auto;
+            min-width: 300px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            border: none;
+            background: none;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        .social-icons {
+            display: flex;
+            /* Imposta il layout flex per allineare gli elementi in orizzontale */
+            justify-content: center;
+            /* Centra gli elementi all'interno del contenitore */
+            align-items: center;
+            /* Allinea gli elementi verticalmente al centro */
+        }
+
+        .social-icon {
+            font-size: 18px;
+            /* Dimensione delle icone */
+            color: #333;
+            /* Colore delle icone, può essere personalizzato */
+            transition: color 0.3s;
+            /* Transizione per il cambio di colore */
+        }
+
+        .social-icon:hover {
+            color: #555;
+            /* Cambia colore al passaggio del mouse */
+        }
+
+        .carousel-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            max-width: 960px;
+            margin: auto;
+            height: 600px;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .carousel-track img {
+            max-height: 600px;
+            min-width: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            z-index: 10;
+        }
+
+        .carousel-control.left {
+            left: 10px;
+        }
+
+        .carousel-control.right {
+            right: 10px;
+        }
+
+
+        /* CSS per il modal centrato e quadrato */
+        .modal-dialog {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        .modal-content {
+            width: 400px; /* Imposta la larghezza */
+            height: 400px; /* Imposta l'altezza per ottenere una forma quadrata */
+            background-color: #191919;
+        }
+
+
+        /* CSS per nascondere inizialmente i paragrafi */
+        .hidden-text {
+            display: none;
+        }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            border: 0;
+        }
+    </style>
+</head>
+
+<body onscroll="scrollFunction()">
+    <nav class="navbar">
+        <button class="hamburger" onclick="toggleMenu()">&#9776;</button>
+        <div class="navbar-links">
+            <img src="static/logo.jpg" alt="Logo Zen Action" class="logo"
+                style="width: 46px;padding-left: 0px;padding-right: 0px;padding-bottom: 0px;padding-top: 0px;margin-left: 6px;">
+            <a href="#school">Chi siamo</a>
+            <a href="#courses">I Corsi</a>
+            <a href="#masters">I Maestri</a>
+            <a href="#contacts">Info</a>
+        </div>
+    </nav>
+
+    <section id="school" class="section fadeIn">
+        <h1>Chi siamo</h1>
+        <div id="descr-text">
+                <p style="text-align: justify;" class="">
+                    Benvenuti nel sito della ASD ZEN ACTION che si occupa dal 2001 di promuovere l'antica arte marziale giapponese del JU JITSU e del Kobudo,
+                    oltre ad occuparsi di Difesa Personale con corsi di KRAV MAGA e sessioni di Autodifesa Personale, in collaborazione con le istituzioni comunali.<br>
+                    Il nostro dojo è a Castellanza (VA) ed è aperto a tutto coloro che vogliono praticare la disciplina marziale del Ju Jitsu giapponese 
+                    e le tematiche specifiche della difesa personale con il metodo Krav Maga, disciplina di origine israeliana finalizzata all'autodifesa.<br>
+                    Venite a trovarci e a praticare approfittando delle nostre lezioni di prova gratuite!
+                </p>
+        </div>
+        <div id="image-carousel" class="carousel-container" style="width:400px;">
+            <div class="carousel-track-container">
+                <div class="carousel-track">
+                    <img src="static/varie_01.jpg" alt="Image 1">
+                    <img src="static/varie_02.jpg" alt="Image 2">
+                    <img src="static/varie_03.jpg" alt="Image 3">
+                    <img src="static/varie_04.jpg" alt="Image 4">
+                </div>
+            </div>
+            <button class="carousel-control left" onclick="moveCarousel(-1)">&laquo;</button>
+            <button class="carousel-control right" onclick="moveCarousel(1)">&raquo;</button>
+        </div>
+    </section>
+
+    <section id="courses" class="section fadeIn">
+        <h1>I corsi</h1>
+        <div class="image-placeholder"></div>
+            <div class="row">
+                <div class="col-lg-6 col-md-12 mb-4">
+                  <h5 class="mb-3 h5" style="text-align: center;">Ju Jitsu</h5>
+                  <p style="text-align: justify;" class="">
+                    Ogni Lunedì dalle 20:30 alle 21:30 e Mercoledì dalle 20:30 alle 22:00<br><a style="text-align: center;" href="#" class="more-info" data-target="#jujitsu-text">Approfondisci!</a>
+                  </p>
+                  <p id="jujitsu-text" class="hidden-text" style="text-align: justify;">
+                    Ju Jitsu significa "dolce arte", Ju leggerezza, cedevolezza, e Jitsu pratica.<br>
+                    Il ju jitsu tradizionale dell'antico Giappone era praticato dai samurai come arte marziale e comprendeva il combattimento <br>
+                    corpo a corpo integrale che consisteva in evitare, proteggere, torcere, lussare troncare, rompere con i piedi,con le mani, neutralizzare gli avversari armati di spada, lancia, bastone, ...<br>
+                    La pratica del ju jitsu si può definire come un'arte di difesa pesonale generalmente senza armi, contro uno o più avversari, che possono essere armati o no.<br>
+                    Il ju jitsu che noi proponiamo si può praticare a qualsiasi età perchè non si basa sulla vigoria fisica ma vuole essere una "scuola di vita" dove la dimensione culturale ed educativa prevale.<br>
+                    Lo studio di questa disciplina dà autocontrollo: chi la pratica pian piano acquista fiducia in se stesso ed anche una certa sicurezza interiore, dà agilità, destrezza e coordinazione psicomotoria, per arrivare anche ad avere un maggior senso della disciplina.<br>
+                    La nostra scuola con attitudine alla difesa personale, proveniente dalla scuola Giapponese ma codificata, per gli allievi occidentali, dal Maestro Robert Clark 9° dan ed è da tenere presente che le varie tecniche del nostro stile sono di estrema efficacia.<br>
+                    L'arte marziale è un "modus vivendi", chi si appassiona se ne innamora perdutamente e trasmette questo "strano sentimento" e anche agli altri.<br>
+                    Dalla sua nascita il Ju Jitsu si è evoluto anche come forma di educazione piuttosto che come un semplice metodo marziale di combattimento.<br>
+                    L'essenza della pratica del Ju Jitsu è lo sviluppo di una mente sana, un corpo robusto e abilità nella difesa personale.<br>
+                    Non si pone enfasi nella vittoria (in un contesto di difesa personale è comunque vitale "non perdere"), ma si eleva il reciproco rispetto e comprensione tra compagni di allenamento, così che entrambi possano godere dei benefici dell'allenamento e progredire insieme.<br>
+                    Il programma di allenamento inizia, dopo il tradizionale saluto maestri-allievi che rappresenta un modo simbolico di mostrare rispetto reciproco, con un riscaldamento per prevenire lesioni.<br>
+                    Si praticano esercizi di stretching che aiutano a rilassare, a rinforzare il corpo e aumentare la flessibilità.<br>
+                    Si passa poi a tecniche elementari, praticando movimenti di base, tecniche di colpi, di bloccaggio e di schivate, e poi tecniche più difficili in cui si lavora in coppia, praticando tecniche di attacco e di controattacco e proiezione al suolo, lotta a terra.
+                  </p>
+                </div>
+                <div class="col-lg-6 col-md-6 mb-4">
+                  <h5 class="mb-3 h5" style="text-align: center;">Krav Maga</h5>
+                  <p class="" style="text-align: justify;">
+                    Ogni Mercoledì, dalle 20:30 alle 22:00.<br><a style="text-align: center;" href="#" class="more-info" data-target="#kravmaga-text">Approfondisci!</a>
+                  </p>
+                  <p id="kravmaga-text" class="hidden-text" style="text-align: justify;">
+                    Il Krav Maga nasce dall'opera di sintesi di Imre Emerich Lichtenfeld (meglio noto come Imi Lichtenfeld), su indicazione dell'esercito israeliano per esigenze militari di sopravvivenza.<br>
+                    Nasce come programma di addestramento accelerato per i soldati dello stato di Israele. Negli ultimi 50 anni si è evoluto e perfezionato sul campo di battaglia, durante le numerose guerre sviluppatesi in Medio Oriente.<br>
+                    La parola Krav Maga, in Ebraico, significa "combattimento con contatto" anche se la traduzione più utilizzata è comunque "combattimento corpo a corpo".<br>
+                    Anche se viene spesso indicato come stile di combattimento finalizzato alla difesa personale, in realtà il Krav Maga ha una componente offensiva che spesso prevede di attaccare l'avversario prima di essere attaccati,<br>
+                    di conseguenza non è puramente difesa personale intesa come reazione ad un'aggressione, il Krav Maga è la quinta essenza della tattica per l'autodifesa.
+                    Fino a non molti anni fa era un esclusivo sistema insegnato esclusivamente ai reparti speciali dell'Israeli Defense Force e agli operatori della sicurezza nazionale, il Krav Maga invece oggi, è insegnato nelle accademie dei più famosi servizi segreti e corpi speciali di polizia<br>
+                    e anche in Italia con una sempre più massiccia diffusione tra le Forze dell'Ordine quali Polizia di Stato, Carabinieri, Corpi di Polizia locale, Reparti Militari d'elite fino ad arrivare agli Operatori della Sicurezza e Vigilanza privata tipo le Guardie del Corpo.<br>
+                    Nell'ambito civile della difesa personale, il Krav Maga viene insegnato da istruttori esperti per essere usato solo in casi estremi di pericolo per la propria vita (violenza da strada, tentativi di stupro, aggressioni a mano armata, ecc...).<br>
+                    In Italia da circa un decennio a questa parte, il Krav Maga è divenuto appunto una realtà anche per i semplici cittadini nell'ambito della difesa personale (self defense).<br>
+                    Le tecniche sono di facile apprendimento e applicazione, perché si basano su reazioni reali, rapide, istintive ed efficaci e le diverse federazioni e organizzazioni esistenti hanno scientificamente studiato e sviluppato metodi specifici adatti ad ogni individuo, <br>
+                    di qualsiasi corporatura (donne, uomini e ragazzi), che si prestano all'autodifesa in qualsiasi luogo e situazione (a piedi, in auto, in ambienti chiusi ecc...), mantenendo sempre intatti i principi fondamentali per cui è nato.<br>
+                    Un aspetto molto importante a cui porre attenzione in fase di allenamento è quello della preparazione psicologica e della preparazione emotiva che devono assolutamente far parte dell'addestramento globale.
+                  </p>
+                </div>
+              </div>
+
+    </section>
+
+    <section id="masters" class="section fadeIn">
+        <h1>I Maestri</h1>
+        <p style="text-align: justify;">I nostri maestri, provenienti da diverse discipline, uniscono esperienza e passione per fornire un
+            insegnamento di alto livello. Scopri di più su ciascuno di loro nella nostra sezione Maestri.</p>
+        <div class="masters-gallery">
+            <img src="static/maestri_01.jpg" alt="Maestro Uno" onclick="openPopup('Maestro Uno')">
+            <img src="static/maestri_02.jpg" alt="Maestro Due" onclick="openPopup('Maestro Due')">
+            <img src="static/maestri_03.jpg" alt="Maestro Tre" onclick="openPopup('Maestro Tre')">
+            <img src="static/maestri_04.jpg" alt="Maestro Quattro" onclick="openPopup('Maestro Quattro')">
+        </div>
+    </section>
+
+    <section id="contacts" class="section fadeIn">
+        <h1>Info</h1>
+        <div class="row">
+            <div class="col-lg-6 col-md-12 mb-4">
+              <h5 class="mb-3 h5" style="text-align: center;">Social e contatti</h5>
+              <p class="">
+              <div class="social-icons">
+
+                      <p style="text-align: justify;">Seguici su Facebook e Instagram per restare aggiornato con le ultime novità e eventi e contattaci per scoprire più su orari ed eventi!</p>
+                  </div>
+                  <ul>
+                    <li style="text-align: justify;"><a href="https://www.facebook.com/AsdZenAction/" style="color:#eeeeee" target="_blank" class="social-icon"><u>AsdZenAction</u>
+                        <i class="fab fa-facebook-square"></i>
+                    </a></li>
+                    <li style="text-align: justify;"><a href="https://www.instagram.com/zen_action/" style="color:#eeeeee" target="_blank" class="social-icon"><u>zen_action</u>
+                        <i class="fab fa-instagram"></i>
+                    </a></li>
+                      <li style="text-align: justify; font-size: 18px;">Indirizzo: Via S. Giovanni, 4/8, 21053 Castellanza VA</li>
+                      <li style="text-align: justify;font-size: 18px;">Iscrizione registro nazionale CONI numero 105453</li>
+                      <li style="text-align: justify;font-size: 18px;">Email: info@zenaction.it</li>
+                      <li style="text-align: justify;font-size: 18px;">Mauro: <a href="tel:+393287348944">+39 328 73 48 944</a> - Paolo: <a href="tel:+393487799097">+39 348 77 99 097</a></li>
+                      <li style="text-align: justify;font-size: 18px;"><a id="showModal" href="#">Informazioni sui cookie</a></li>
+              </p>
+            </div>
+            <div class="col-lg-6 col-md-6 mb-4">
+              <h5 class="mb-3 h5">Dove siamo</h5>
+              <p class="">
+                  <div id="map-container">
+                    <iframe id="map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11590.01928481754!2d8.88714066522066!3d45.61047505021534!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDUuNjEwNDc1LCA4Ljg4NzE0MDY!5e0!3m2!1sit!2sit!4v1580893521752!5m2!1sit!2sit" allowfullscreen></iframe>
+                  </div>
+                  <a href="https://www.google.com/maps/dir/?api=1&destination=45.61047505021534, 8.88714066522066" target="_blank" id="get-directions">Ottieni indicazioni stradali</a>
+              </p>
+            </div>
+          </div>
+        
+    </section>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="cookieModal" tabindex="-1" role="dialog" aria-labelledby="cookieModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cookieModalLabel">Informazioni sui cookie</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="text-align: justify;">
+                    Utilizziamo cookie tecnici necessari per il funzionamento del sito e per fornire le funzionalità base come la navigazione della pagina e l'accesso alle aree protette del sito.<br>
+                    Questi cookie non raccolgono informazioni personali degli utenti e non sono utilizzati per scopi di analisi o pubblicitari.<br>
+                    La tua esperienza di navigazione è la nostra priorità, e questi cookie sono essenziali per il corretto funzionamento del sito.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function scrollFunction() {
+            var nav = document.querySelector('.nav');
+            if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+                nav.classList.add('scrolling');
+            } else {
+                nav.classList.remove('scrolling');
+            }
+        }
+
+        function openPopup(master) {
+            const masterDetails = {
+                'Maestro Uno': 'Il Maestro Uno ha oltre 20 anni di esperienza nel Ju Jitsu...',
+                'Maestro Due': 'Maestro Due è specializzato in Judo...',
+                'Maestro Tre': 'Con un background in Aikido...',
+                'Maestro Quattro': 'Maestro Quattro è un esperto di Karate...'
+            };
+
+            const popupContent = `
+            <div class="popup-container" onclick="closePopup(event)">
+                <div class="popup" onclick="event.stopPropagation()">
+                    <button class="close-btn" onclick="closePopup(event)">&times;</button>
+                    <h2>${master}</h2>
+                    <p>${masterDetails[master]}</p>
+                </div>
+            </div>`;
+
+            document.body.insertAdjacentHTML('beforeend', popupContent);
+            document.querySelector('.popup-container').style.display = 'flex';
+        }
+
+        function closePopup(event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            const container = document.querySelector('.popup-container');
+            if (container) {
+                container.style.display = 'none';
+                document.body.removeChild(container);
+            }
+        }
+
+        let currentSlide = 0;
+        let slideInterval;
+
+        const moveCarousel = (dir) => {
+            const track = document.querySelector('.carousel-track');
+            const slides = document.querySelectorAll('.carousel-track img');
+            const slideWidth = slides[0].clientWidth;
+
+            // Gestione del loop del carosello
+            currentSlide += dir;
+            if (currentSlide < 0) {
+                currentSlide = slides.length - 1;  // Torna all'ultima immagine se supera la prima
+            } else if (currentSlide >= slides.length) {
+                currentSlide = 0;  // Riparte dalla prima immagine dopo l'ultima
+            }
+
+            track.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
+        };
+
+        const startSlideShow = () => {
+            slideInterval = setInterval(() => {
+                moveCarousel(1);  // Cambia l'immagine ogni 3 secondi
+            }, 3000);
+        };
+
+        const stopSlideShow = () => {
+            clearInterval(slideInterval);
+        };
+
+        document.querySelector('.carousel-container').addEventListener('mouseenter', stopSlideShow);
+        document.querySelector('.carousel-container').addEventListener('mouseleave', startSlideShow);
+
+        // Inizializza il carosello al caricamento della pagina
+        document.addEventListener('DOMContentLoaded', startSlideShow);
+
+        function toggleMenu() {
+            const links = document.querySelector('.navbar-links');
+            if (links.style.display === 'flex') {
+                links.style.display = 'none';
+            } else {
+                links.style.display = 'flex';
+            }
+        }
+
+        // Aggiungere l'ascoltatore di eventi a tutte le voci del menu
+        document.querySelectorAll('.navbar-links a').forEach(link => {
+            link.addEventListener('click', function () {
+                const links = document.querySelector('.navbar-links');
+                if (window.innerWidth <= 768) { // Assicurarsi che il codice si attivi solo su schermi piccoli
+                    links.style.display = 'none';
+                }
+            });
+        });
+
+        // Modal
+        $(document).ready(function(){
+            $("#showModal").click(function(event){
+                event.preventDefault(); // Previene il comportamento predefinito del link
+                $("#cookieModal").modal('show');
+            });
+        });
+
+        $(document).ready(function(){
+            $(".more-info").click(function(event){
+                event.preventDefault();
+                var target = $(this).data("target");
+                $(target).toggle();
+                if ($(target).is(":visible")) {
+                    $(this).text("Chiudi!");
+                } else {
+                    $(this).text("Approfondisci!");
+                }
+            });
+        });
+ 
+    </script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days*24*60*60*1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
+
+    $(document).ready(function() {
+        var cookieModalSeen = getCookie("cookieModalSeen");
+        if (!cookieModalSeen) {
+            $('#cookieModal').modal('show');
+            setCookie("cookieModalSeen", "true", 365);
+        }
+    });
+</script>
+
+
+</body>
+
+</html>
