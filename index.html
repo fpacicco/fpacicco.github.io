@@ -505,7 +505,7 @@
 
             const popupContent = `
             <div class="popup-container" onclick="closePopup(event)">
-                <div class="popup" onclick="event.stopPropagation()">
+                <div class="popup" onclick="event.stopPropagation()" style="background-color: #333333;">
                     <button class="close-btn" onclick="closePopup(event)">&times;</button>
                     <h2>${master}</h2>
                     <p>${masterDetails[master]}</p>
